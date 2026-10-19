@@ -1,6 +1,2 @@
 # log-monitoring
-
-# first create
-# limjaeseo
-
-# test.py
+# limjaeseo, jscjsc3217, lemonmiso1215, linux1004
