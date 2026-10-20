@@ -1,0 +1,11 @@
+# 사진 폴더 위치 (cctv_yolo 폴더 기준)
+path: dataset
+train: images/train
+val: images/val
+test: images/test
+
+# 번호: 이름 (labeled/classes.txt 순서와 같아야 함)
+names:
+  0: conceal_item
+  1: person
+  2: pick_item
