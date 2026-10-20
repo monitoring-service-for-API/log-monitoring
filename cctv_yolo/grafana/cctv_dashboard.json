@@ -1,0 +1,35 @@
+{
+  "__inputs": [
+    {"name": "DS_SQLITE", "label": "SQLite", "type": "datasource", "pluginId": "frser-sqlite-datasource", "pluginName": "SQLite"}
+  ],
+  "title": "CCTV 도난 의심 경보 (테스트)",
+  "uid": "cctv-alerts",
+  "schemaVersion": 39,
+  "time": {"from": "now-6h", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "도난 의심 경보 수",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "datasource": {"type": "frser-sqlite-datasource", "uid": "${DS_SQLITE}"},
+      "targets": [{"refId": "A", "queryType": "table", "timeColumns": [],
+        "queryText": "SELECT COUNT(*) AS alerts FROM alerts",
+        "rawQueryText": "SELECT COUNT(*) AS alerts FROM alerts"}]
+    },
+    {
+      "id": 2, "type": "barchart", "title": "시간대별 경보",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "datasource": {"type": "frser-sqlite-datasource", "uid": "${DS_SQLITE}"},
+      "targets": [{"refId": "A", "queryType": "table", "timeColumns": [],
+        "queryText": "SELECT strftime('%H', ts) || '시' AS hour, COUNT(*) AS alerts FROM alerts GROUP BY 1 ORDER BY 1",
+        "rawQueryText": "SELECT strftime('%H', ts) || '시' AS hour, COUNT(*) AS alerts FROM alerts GROUP BY 1 ORDER BY 1"}]
+    },
+    {
+      "id": 3, "type": "table", "title": "경보 목록",
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 9},
+      "datasource": {"type": "frser-sqlite-datasource", "uid": "${DS_SQLITE}"},
+      "targets": [{"refId": "A", "queryType": "table", "timeColumns": [],
+        "queryText": "SELECT ts AS 시각, camera AS 카메라, track_id AS 사람번호, event AS 내용 FROM alerts ORDER BY ts DESC",
+        "rawQueryText": "SELECT ts AS 시각, camera AS 카메라, track_id AS 사람번호, event AS 내용 FROM alerts ORDER BY ts DESC"}]
+    }
+  ]
+}
