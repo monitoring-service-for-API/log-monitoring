@@ -1,0 +1,3 @@
+{"ts": "2026-10-22T23:10:08", "host": "cctv-node", "source": "cctv", "severity": "high", "zone": "counter", "camera": "cam01", "track_id": 21, "event": "theft_suspect", "dwell_sec": 5.0, "snapshot": "cam01_20261022_231008_id21.jpg"}
+{"ts": "2026-10-22T23:10:18", "host": "cctv-node", "source": "cctv", "severity": "high", "zone": "counter", "camera": "cam01", "track_id": 14, "event": "theft_suspect", "dwell_sec": 5.0, "snapshot": "cam01_20261022_231018_id14.jpg"}
+{"ts": "2026-10-22T23:10:18", "host": "cctv-node", "source": "cctv", "severity": "high", "zone": "counter", "camera": "cam01", "track_id": 39, "event": "theft_suspect", "dwell_sec": 5.0, "snapshot": "cam01_20261022_231018_id39.jpg"}
