@@ -1,0 +1,49 @@
+# 이메일 계정 및 비밀번호
+.cctv_email.env
+.env
+.env.*
+!.env.example
+
+# 가상환경
+.venv/
+venv/
+
+# CCTV 얼굴 사진 및 로그
+snapshots/
+*.jsonl
+*.log
+
+# Python 임시 파일
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 로컬 백업 파일
+*_before_*.py
+
+# 인증 정보
+*.pem
+*.key
+
+# 개인정보 및 이메일 설정
+.cctv_email.env
+.env
+.env.*
+!.env.example
+
+# 얼굴 사진 및 등록 데이터
+snapshots/
+registered_faces/
+
+# 학습 모델 및 가중치
+models/
+*.pt
+
+# 편집기 임시 파일
+*.swp
+*.swo
+*~
+
+# 백업 파일
+*_backup.py
+*_backup_*.py
