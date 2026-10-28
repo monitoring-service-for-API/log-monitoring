@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile</title>
+<style>
+  :root {
+    --bg: #f4f5fb;
+    --card: #ffffff;
+    --text: #1d2033;
+    --muted: #7a7f99;
+    --accent: #5b5bf0;
+    --accent-2: #a35bf0;
+    --border: #e6e8f2;
+    --error: #e5484d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10111a;
+      --card: #1a1c29;
+      --text: #eceefa;
+      --muted: #8d92ad;
+      --border: #2a2d40;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(91,91,240,.18), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(163,91,240,.18), transparent 40%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  }
+  .card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 28px 28px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(30, 30, 80, .12);
+    animation: rise .5s ease;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .avatar {
+    width: 88px; height: 88px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 36px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 8px 24px rgba(91,91,240,.35);
+    text-transform: uppercase;
+  }
+  .name { font-size: 26px; font-weight: 700; letter-spacing: -.3px; }
+  .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .stats {
+    display: flex; justify-content: center; gap: 12px;
+    margin: 24px 0;
+  }
+  .stat {
+    flex: 1;
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+  .stat-key { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  button {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: transform .1s, opacity .2s;
+  }
+  button:hover { opacity: .9; }
+  button:active { transform: scale(.98); }
+  button:disabled { opacity: .5; cursor: default; }
+  .skeleton {
+    background: linear-gradient(90deg, var(--border) 25%, transparent 50%, var(--border) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    color: transparent !important;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .error {
+    display: none;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--error);
+  }
+  .updated { font-size: 12px; color: var(--muted); margin-top: 12px; }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="avatar" id="avatar">?</div>
+    <div class="name" id="name">Loading</div>
+    <div class="label">Profile</div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="weight">--</div>
+        <div class="stat-key">몸무게 - 절대공개금지</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="group">--</div>
+        <div class="stat-key">구분</div>
+      </div>
+    </div>
+
+    <p class="error" id="error"></p>
+    <button id="refresh">새로고침</button>
+    <p class="updated" id="updated"></p>
+  </main>
+
+<script>
+  const API_URL = "/test/data";
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    avatar: $("avatar"), name: $("name"), weight: $("weight"),
+    group: $("group"), error: $("error"), refresh: $("refresh"), updated: $("updated")
+  };
+
+  function setLoading(on) {
+    els.refresh.disabled = on;
+    els.refresh.textContent = on ? "불러오는 중..." : "새로고침";
+    [els.name, els.weight, els.group].forEach(el => el.classList.toggle("skeleton", on));
+  }
+
+  function render(data) {
+    const name = String(data.name ?? "Unknown");
+    const weight = Number(data.weight);
+    els.name.textContent = name;
+    els.avatar.textContent = name.charAt(0) || "?";
+    els.weight.textContent = Number.isFinite(weight) ? weight : "--";
+    els.group.textContent = Number.isFinite(weight) ? (weight < 98 ? "비만일수도 있음..." : "초고도비만") : "--";
+    els.updated.textContent = "업데이트: " + new Date().toLocaleTimeString("ko-KR");
+  }
+
+  async function load() {
+    setLoading(true);
+    els.error.style.display = "none";
+    try {
+      const res = await fetch(API_URL, { headers: { "Accept": "application/json" } });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      render(await res.json());
+    } catch (err) {
+      els.error.textContent = "데이터를 불러오지 못했어요 (" + err.message + ")";
+      els.error.style.display = "block";
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  els.refresh.addEventListener("click", load);
+  load();
+</script>
+</body>
+</html>
